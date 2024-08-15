@@ -45,7 +45,7 @@ def detect_and_crop_faces(resized_img, width_crop, height_crop):
     :param height_crop: 剪裁高度
     :return: 剪裁后的图像列表
     """
-    face_cascade = cv2.CascadeClassifier('data\\haarcascade_frontalface_alt.xml')
+    face_cascade = cv2.CascadeClassifier('./data/haarcascade_frontalface_alt.xml')
     faces = face_cascade.detectMultiScale(resized_img, 1.1, 5)
     cropped_images = []
     for (x, y, w, h) in faces:
@@ -78,6 +78,7 @@ def process_image(image_path, save_path,width_crop, height_crop):
         cropped_images = detect_and_crop_faces(resized_img, width_crop, height_crop)
         if cropped_images:
             save_cropped_image(cropped_images[0],save_path)  # 只保存第一张剪裁后的图像替换原文件
+        logging.info(f"success {save_path}")
         return {'status': 'success'}
     except Exception as e:
         logging.error(f"Error processing image {image_path}: {str(e)}")
@@ -89,6 +90,7 @@ def resize_image():
     save_path = request.form.get('save_path')
     target_width = int(request.form.get('target_width', 480))  # 提供默认值
     target_height = int(request.form.get('target_height', 640))  # 提供默认值
+    logging.error(f"image_path: {image_path} save_path: {save_path} target_width: {target_width} target_height: {target_height}")
     if not os.path.exists(image_path):
         return jsonify({'status': 'failed','message': 'Image path does not exist'})
     if target_width <= 0 or target_height <= 0:
